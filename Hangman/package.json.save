@@ -4,12 +4,21 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+<<<<<<< HEAD
+  "dev": "vite",
+  "build": "vite build",
+  "lint": "eslint .",
+  "preview": "vite preview"
+}
+,
+=======
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "type-check": "tsc -b"
   },
+>>>>>>> 72594dd (fix: use vite build for Vercel)
   "dependencies": {
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
