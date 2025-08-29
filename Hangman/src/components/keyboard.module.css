@@ -1,0 +1,50 @@
+.keyboardContainer {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 columns, like a real keyboard row */
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 500px;
+}
+
+.btn {
+  border: 3px solid black;
+  background: none;
+  aspect-ratio: 1 / 1;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: black;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.btn:hover:not(:disabled),
+.btn:focus:not(:disabled) {
+  background-color: lightgray;
+  transform: scale(1.05);
+}
+
+.btn:active {
+  background-color: black;
+  color: white;
+}
+
+.btn.active {
+  background-color: green;
+  color: white;
+  pointer-events: none;
+}
+
+.btn.inactive {
+  background-color: red;
+  color: white;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Mobile tweak: fewer columns so buttons don’t shrink */
+@media (max-width: 768px) {
+  .keyboardContainer {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}

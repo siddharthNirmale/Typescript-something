@@ -1,0 +1,55 @@
+body {
+  margin: 0;
+  background: white;
+  font-family: monospace;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100vh;
+}
+
+.game-section {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  border-right: 2px solid black;
+  padding: 1rem;
+}
+
+.keyboard-section {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.status-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Mobile: stack vertically */
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .game-section {
+    width: 100%;
+    border-right: none;
+    border-bottom: 2px solid black;
+  }
+
+  .keyboard-section {
+    width: 100%;
+  }
+}

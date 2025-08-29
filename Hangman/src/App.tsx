@@ -1,44 +1,87 @@
-
-import { useState } from 'react'
-import words from './wordList.json';
+import { useCallback, useEffect, useState } from 'react'
+import words from './wordList.json'
 import './App.css'
-import HangmanDrawing from './components/HangmanDrawing';
-import HangManWord from './components/HangManWord';
-import Keyboard from './components/Keyboard';
+import { HangManDrawing } from './components/HangManDrawing'
+import { HangManWord } from './components/HangManWord'
+import { Keyboard } from './components/Keyboard'
+
+function getWord() {
+  return words[Math.floor(Math.random() * words.length)]
+}
 
 function App() {
-  const [wordToGuess, setWordToGuess] = useState(() => {
-    return words[Math.floor(Math.random() * words.length)]
-  })
+  const [wordToGuess, setWordToGuess] = useState(getWord)
+  const [guessedLetters, setGuessedLetters] = useState<string[]>([])
 
-  const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
+  const incorrectLetters = guessedLetters.filter(
+    letter => !wordToGuess.includes(letter)
+  )
 
-  console.log(wordToGuess);
+  const isLoser = incorrectLetters.length >= 6
+  const isWinner = wordToGuess.split('').every(letter => guessedLetters.includes(letter))
+
+  const addGuessedLetter = useCallback(
+    (letter: string) => {
+      if (guessedLetters.includes(letter) || isLoser || isWinner) return
+      setGuessedLetters(currentLetters => [...currentLetters, letter])
+    },
+    [guessedLetters, isLoser, isWinner]
+  )
+
+  // Reset game on Enter
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase()
+      if (key !== 'enter') return
+      e.preventDefault()
+      setGuessedLetters([])
+      setWordToGuess(getWord())
+    }
+
+    document.addEventListener('keypress', handler)
+    return () => {
+      document.removeEventListener('keypress', handler)
+    }
+  }, [])
+
+  // Listen for letter key presses
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase()
+      if (!key.match(/^[a-z]$/)) return
+      e.preventDefault()
+      addGuessedLetter(key)
+    }
+
+    document.addEventListener('keypress', handler)
+    return () => {
+      document.removeEventListener('keypress', handler)
+    }
+  }, [guessedLetters, addGuessedLetter])
 
   return (
-    <div style={{
-      maxWidth: "800px",
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '2rem',
-      margin: '0 auto',
-      alignItems: 'center',
+    <div className="app-container">
+      {/* Game side */}
+      <div className="game-section">
+        <div className="status-text">
+          {isWinner && 'Winner! 🎉 Press Enter to play again'}
+          {isLoser && 'Game Over 💀 Press Enter to play again'}
+          {!isWinner && !isLoser && 'Keep Guessing!'}
+        </div>
 
-    }}>
-      <div style={{
-        fontSize: '2rem',
-        fontWeight: 'bold',
-        textAlign: 'center',
-
-
-      }}>
-        Lose
-        Win
+        <HangManDrawing numberOfGuesses={incorrectLetters.length} />
+        <HangManWord reveal={isLoser} guessedLetters={guessedLetters} wordToGuess={wordToGuess} />
       </div>
 
-      <HangmanDrawing/>
-      <HangManWord />
-      <Keyboard />
+      {/* Keyboard side */}
+      <div className="keyboard-section">
+        <Keyboard
+          disabled={isWinner || isLoser}
+          activeLetters={guessedLetters.filter(letter => wordToGuess.includes(letter))}
+          inactiveLetters={incorrectLetters}
+          addGuessedLetter={addGuessedLetter}
+        />
+      </div>
     </div>
   )
 }
